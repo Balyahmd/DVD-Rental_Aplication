@@ -13,10 +13,17 @@ class DvdController extends Controller
      */
     public function index()
     {
-        // $dvd = dvd::all();
-        // return view('Dashbord.index', compact('dvd'));
         $dvd = dvd::orderBy('created_at', 'DESC')->get();
 
+        $search = $request->input('search');
+
+        if ($search) {
+            $dvd = dvd::query()->when($search, function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%');
+            })->get();
+            return view('dvd.index', compact('dvd'));
+        }
+        return view('dvd.index', compact('dvd'));
         return view('dvd.index', compact('dvd'));
     }
 
